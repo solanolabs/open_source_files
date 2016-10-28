@@ -1,0 +1,49 @@
+# solano.yml configuration file for Solano CI https://www.solanolabs.com/
+ 
+# http://docs.solanolabs.com/ConfiguringLanguage/php/
+# Versions should match dev/staging/production environments
+php:
+  version: '7.0'
+ 
+# Automatically run PHPUnit tests in parallel using solano-phpunit test runner
+tests:
+  - type: phpunit
+    mode: parallel
+    command: ./vendor/bin/solano-phpunit -c tests/complete.phpunit.xml
+    files:
+      # Glob pattern determining test files to run
+      - tests/Composer/**Test.php
+ 
+# http://docs.solanolabs.com/Setup/setup-hooks/
+hooks:
+  pre_setup: |
+    set -o errexit -o pipefail  # exit on error
+    # Install dependencies
+    composer install --prefer-dist
+    ./bin/composer install --prefer-dist
+    # Install solano-phpunit parallel test runner. Alternately, it could be included in 'composer.json'.
+    composer require --dev solano/solano-phpunit:dev-phpunit_5_and_test_priority
+ 
+# http://docs.solanolabs.com/Setup/caching-dependencies/
+# For libraries and tools (like composer), building without a cache can expose breaking changes in required components
+cache:
+  nocache: true
+# Typical PHP application builds would have a cache configuration like:
+# cache:
+#   key_paths:
+#     - composer.json
+#     - composer.lock
+#   save_paths:
+#     - vendor
+notify:
+- channel: email
+  trigger-on: 
+    - failed
+    - error
+    - setupfailed
+    - unconfigured
+    - checkoutfailed
+  branch: master
+  subject: "%repo%"
+  body: "Build failed with %error-count% error(s) and %passed-count% success(es) https://ci.solanolabs.com:443/reports/%build-id%"
+  recipients: $ZULIP_STREAM
