@@ -1,3 +1,4 @@
+![Solano Labs Logo](https://www.solanolabs.com/assets/solano-labs-1cfeb8f4276fc9294349039f602d5923.png)
 # open_source_files
 each folder contains a yml file that can be added to the named repo to run its test.
 custom_enumeration contains an exaple of the custom_enumeration script that can be used to add a yml to an open_source's upstream repo
