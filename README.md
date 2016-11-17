@@ -1,24 +1,17 @@
 ![Solano Labs Logo](https://www.solanolabs.com/assets/solano-labs-1cfeb8f4276fc9294349039f602d5923.png)
 # open_source_files
-each folder contains a yml file that can be added to the named repo to run its test.
-custom_enumeration contains an exaple of the custom_enumeration script that can be used to add a yml to an open_source's upstream repo
+Each folder contains a yml file that can be added to the upstream repo to run its test.
+The custom_enumeration folder contains an example of a CE script that can be used to locally add a yml to build while its running.
 
 
 # queue router
-queue should be set to ``opensource_single``
-
-# custom_scm should be set to 
-```
-set -v
-wget https://raw.githubusercontent.com/solanolabs/open_source_files/master/scipy/solano.yml -O solano.yml
-sed -i -e "s/\$ZULIP_STREAM/$ZULIP_STREAM/g" solano.yml
-```
-with the url replaced to point at the desired yml file
+The queue should be set to ``opensource_single`` for these repos
 
 # current schedule
 Builds are currently schedule to run daily at 9am
 
 # notifications
+This is the current notification blob added to the yamls
 ```
 notify:
 - channel: email
