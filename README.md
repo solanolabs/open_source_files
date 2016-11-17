@@ -11,7 +11,7 @@ The custom_scm folder contains an example of a [Custom Scm](http://docs.solanola
 The queue should be set to ``opensource_single`` for these repos
 
 # current schedule
-Builds are currently schedule to run daily at 9am
+Builds are currently schedule to run daily at 5am PST
 
 # notifications
 This is the current notification blob added to the yamls
