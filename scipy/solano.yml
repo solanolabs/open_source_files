@@ -4,11 +4,10 @@ python:
 submodules: true
 environment:
   'TZ' : Etc/UTC
-  'TESTMODE': fast
-  'REFGUIDE_CHECK': 1
-  'COVERAGE': ''
-  'NPY_RELAXED_STRIDES_CHECKING': 1
-  'NUMPYSPEC': '--upgrade git+git://github.com/numpy/numpy.git@v1.10.4'
+  'PRE_WHEELS' : 'https://7933911d6844c6c53a7d-47bd50c35cd79bd838daf386af554a83.ssl.cf2.rackcdn.com'
+  'TESTMODE' : 'fast'
+  'COVERAGE' : ''
+  'NUMPYSPEC': '--pre --upgrade --timeout=60 -f $PRE_WHEELS numpy'
 tests:
    - |
      set -o pipefail
@@ -25,22 +24,9 @@ tests:
    - |
      set -o pipefail
      set -ev
-     if [ "$USE_WHEEL" == "1" ]; then
-       pip wheel . -v
-       pip install scipy*.whl -v
-       USE_WHEEL_BUILD="--no-build"
-     elif [ "$USE_SDIST" == "1" ]; then
-       python setup.py sdist
-       pushd dist;
-       pip install scipy*
-       popd
-       USE_WHEEL_BUILD="--no-build"
-     fi
-     python -u $OPTIMIZE runtests.py -g -m $TESTMODE $COVERAGE $USE_WHEEL_BUILD |& tee runtests.log
+     export SCIPY_AVAILABLE_MEM=3G
+     python -u $OPTIMIZE runtests.py -g -m $TESTMODE $COVERAGE $USE_WHEEL_BUILD -- -rfEX -n 2 2>&1 | tee runtests.log
      tools/validate_runtests_log.py $TESTMODE < runtests.log
-     if [ "$REFGUIDE_CHECK" == "1" ]; then
-       python runtests.py -g --refguide-check;
-     fi
 hooks:
   pre: |
     set -v
@@ -56,18 +42,8 @@ hooks:
     pushd builds
     pip install --install-option="--no-cython-compile" Cython==0.23.4
     pip install $NUMPYSPEC
-    pip install pytest pytest-xdist pytest-faulthandler
-    pip install nose mpmath argparse Pillow codecov
+    pip install pytest pytest-xdist pytest-faulthandler nose mpmath argparse Pillow codecov
     pip install --upgrade pip setuptools
     pip install gmpy
-    if [ "$TESTMODE" == "full" ]; then
-      pip install coverage;
-    fi
-    if [ "$USE_WHEEL" == "1" ]; then
-      pip install wheel;
-    fi
-    if [ "$REFGUIDE_CHECK" == "1" ]; then
-      pip install matplotlib Sphinx==1.2.3;
-    fi
     python -V
     popd
